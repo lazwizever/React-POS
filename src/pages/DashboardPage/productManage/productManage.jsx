@@ -5,13 +5,198 @@ import Grid from "@mui/material/Grid";
 import {Autocomplete, Card, CardActions, CardContent, TextField, Typography} from "@mui/material";
 import Button from "@mui/material/Button";
 import GDSEButton from "../../../component/common/Button/button";
+import signUpService from "../../../service/signUpService";
+import productManagerService from "../../../service/productManagerService";
 
 
 class ProductManage extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            allProduct:[],
+            formDate: {
+
+                title: "",
+                price:"",
+                description: "",
+                image: "",
+                category: ""
+            }
+        }
+
     }
+
+    submitProduct = async () => {
+
+        let product = this.state.formData();
+        let res = await productManagerService.submitProduct(product);
+
+        if (res.status === 200) {
+            this.setState({
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            //await this.loadData();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    loadAllProducts = async () => {
+
+        let res = await productManagerService.fetchProduct();
+
+        if (res.status === 200) {
+            this.setState({
+                allProduct : res.data.data,
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            //await this.loadData();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    loadAllProductsByCategory = async () => {
+
+        let res = await productManagerService.fetchProductByCategories();
+
+        if (res.status === 200) {
+            this.setState({
+                allProduct : res.data.data,
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            //await this.loadData();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    loadSingleProduct = async () => {
+        //let Id = this.state.id
+        let res = await productManagerService.fetchSingleProduct(/*Id*/);
+
+        if (res.status === 200) {
+            let data = res.data.data
+            this.setState({
+
+                formDate: {
+
+                    title: data.title,
+                    price:data.price,
+                    description: data.description,
+                    image: data.image,
+                    category: data.category
+                },
+
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            //await this.loadData();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    loadProductsByLimit = async () => {
+        //let params = this.state.limit
+        let res = await productManagerService.fetchAllProductLimit(/*params*/);
+
+        if (res.status === 200) {
+            this.setState({
+                allProducts : res.data.data,
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            //await this.loadData();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    updateProduct = async (data) => {
+
+
+        /*let id = this.state.id;*/
+        let res = await productManagerService.putProduct(data.id,data);
+
+        if (res.status === 200) {
+            this.setState({
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            await this.loadAllProducts();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    deleteUser = async (data) => {
+
+        /*let id = this.state.id;*/
+
+        let res = await productManagerService.deleteProduct(data.id);
+
+        if (res.status === 200) {
+            this.setState({
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            await this.loadAllProducts();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    componentDidMount() {
+        this.loadAllProducts();
+    }
+
 
     render() {
         const {classes} = this.props;

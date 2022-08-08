@@ -4,9 +4,9 @@ import axios from "../axios";
 
 class SignUpService{
 
-postUserCustomer = async (data) => {
+submitProduct = async (data) => {
     const promise = new Promise((resolve, reject) => {
-        axios.post('users', data)    // 20s
+        axios.post('products', data)    // 20s
             .then((res) => {
                 return resolve(res)
             })
@@ -19,9 +19,9 @@ postUserCustomer = async (data) => {
 }
 
 
-    putUser = async (id,data) => {
+    putProduct = async (id,data) => {
         const promise = new Promise((resolve, reject) => {
-            axios.put('users/'+id,data)    // 20s
+            axios.put('products/'+id,data)    // 20s
                 .then((res) => {
                     return resolve(res)
                 })
@@ -36,22 +36,9 @@ postUserCustomer = async (data) => {
 
 
 
-    fetchCustomers = async () => {
+    fetchProduct = async () => {
         const promise = new Promise((resolve, reject) => {
-            axios.get('users')
-                .then((res) => {
-                    return resolve(res)
-                })
-                .catch((err) => {
-                    return resolve(err)
-                })
-        })
-        return await promise;
-    }
-
-    fetchSingleCustomer = async (data) => {
-        const promise = new Promise((resolve, reject) => {
-            axios.get('users/'+data)
+            axios.get('products')
                 .then((res) => {
                     return resolve(res)
                 })
@@ -63,9 +50,9 @@ postUserCustomer = async (data) => {
     }
 
 
-    deleteCustomer = async (id) => {
+    fetchProductByCategories = async () => {
         const promise = new Promise((resolve, reject) => {
-            axios.get('users/'+id)
+            axios.get('products/categories')
                 .then((res) => {
                     return resolve(res)
                 })
@@ -77,9 +64,39 @@ postUserCustomer = async (data) => {
     }
 
 
-    fetchAllCustomersLimit = async (params) => {
+
+
+    fetchSingleProduct = async (data) => {
         const promise = new Promise((resolve, reject) => {
-            axios.get('users',{params:params})
+            axios.get('products/'+data)
+                .then((res) => {
+                    return resolve(res)
+                })
+                .catch((err) => {
+                    return resolve(err)
+                })
+        })
+        return await promise;
+    }
+
+
+    deleteProduct = async (id) => {
+        const promise = new Promise((resolve, reject) => {
+            axios.get('products/'+id)
+                .then((res) => {
+                    return resolve(res)
+                })
+                .catch((err) => {
+                    return resolve(err)
+                })
+        })
+        return await promise;
+    }
+
+
+    fetchAllProductLimit = async (params) => {
+        const promise = new Promise((resolve, reject) => {
+            axios.get('products',{params:params})
                 .then((res) => {
                     return resolve(res)
                 })

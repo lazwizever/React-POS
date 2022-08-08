@@ -3,12 +3,185 @@ import Grid from "@mui/material/Grid";
 import {Autocomplete, TextField, Typography} from "@mui/material";
 import GDSEButton from "../../../component/common/Button/button";
 import DatePicker from "../../../component/common/DatePicker";
+import productManagerService from "../../../service/productManagerService";
+import cartManagerService from "../../../service/cartManagerService";
 
 
 class CartManage extends Component{
     constructor(props) {
         super(props);
+
+
+        this.state={
+            allCart:[],
+            cartData:{
+                userId: "",
+                    date: "",
+                    products: [
+                    {
+                        productId: "",
+                        quantity: ""
+                    },
+                    {
+                        productId: "",
+                        quantity: ""
+                    }
+                ]
+            }
+        }
+
     }
+
+
+    submitCart = async () => {
+
+        let cart = this.state.cartData();
+        let res = await cartManagerService.submitCart(cart);
+
+        if (res.status === 200) {
+            this.setState({
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            await this.loadAllCart();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    loadAllCart = async () => {
+
+        let res = await cartManagerService.fetchCart();
+
+        if (res.status === 200) {
+            this.setState({
+                allCart : res.data.data,
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            await this.loadAllCart();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    loadSingleCart = async () => {
+        //let Id = this.state.id
+        let res = await cartManagerService.fetchSingleCart(/*Id*/);
+
+        if (res.status === 200) {
+            let data = res.data.data
+            this.setState({
+
+                cartData:{
+                    userId: data.userId,
+                    date: data.date,
+                    products: data.products
+                },
+
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            //await this.loadData();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    loadCartByLimit = async () => {
+        //let params = this.state.limit
+        let res = await cartManagerService.fetchAllCartsLimit(/*params*/);
+
+        if (res.status === 200) {
+            this.setState({
+                allCart : res.data.data,
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            //await this.loadData();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+
+    updateCart = async (data) => {
+
+
+        /*let id = this.state.id;*/
+        let res = await cartManagerService.putCart(data.id,data);
+
+        if (res.status === 200) {
+            this.setState({
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            await this.loadAllProducts();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    deleteUser = async (data) => {
+
+        /*let id = this.state.id;*/
+
+        let res = await cartManagerService.deleteCart(data.id);
+
+        if (res.status === 200) {
+            this.setState({
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            await this.loadAllCart();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    componentDidMount() {
+        this.loadAllCart();
+    }
+
+
+
+
 
     render() {
         return(

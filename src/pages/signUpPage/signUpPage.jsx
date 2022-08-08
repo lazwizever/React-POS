@@ -36,7 +36,11 @@ class SignUpPage extends Component {
         super(props);
 
 
+
         this.state = {
+            allUsers:[],
+
+
 
             userData: {
                 email: "",
@@ -92,13 +96,13 @@ class SignUpPage extends Component {
         }
     };
 
+    loadAllUsers = async () => {
 
-    getAllUsers = async () => {
-
-        let res = await signUpService.fetchCustomer();
+        let res = await signUpService.fetchCustomers();
 
         if (res.status === 200) {
             this.setState({
+                allUsers : res.data.data,
                 alert: true,
                 message: res.data.message,
                 severity: 'success'
@@ -114,6 +118,125 @@ class SignUpPage extends Component {
         }
     };
 
+    loadSingleUser = async () => {
+        //let cusId = this.state.id
+        let res = await signUpService.fetchSingleCustomer(/*cusId*/);
+
+        if (res.status === 200) {
+            let data = res.data.data
+            this.setState({
+
+                userData: {
+                    email: data.email,
+                    username: data.username,
+                    password: data.password,
+
+                    name: {
+                        firstname: data.name.firstname,
+                        lastname: data.name.lastname,
+                    },
+
+                    address: {
+                        city: data.address.city,
+                        street: data.address.street,
+                        number: data.address.number,
+                        zipcode: data.address.zipcode,
+                        geolocation: {
+                            lat: data.geolocation.lat,
+                            long: data.geolocation.long
+                        }
+                    },
+                    phone: "data.phone",
+
+                },
+
+                allUsers : res.data.data,
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            //await this.loadData();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    loadUsersByLimit = async () => {
+        //let params = this.state.limit
+        let res = await signUpService.fetchAllCustomersLimit(/*params*/);
+
+        if (res.status === 200) {
+            this.setState({
+                allUsers : res.data.data,
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            //await this.loadData();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    updateUser = async (data) => {
+
+
+        /*let id = this.state.id;*/
+        let res = await signUpService.postUserCustomer(data.id,data);
+
+        if (res.status === 200) {
+            this.setState({
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            await this.loadAllUsers();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    deleteUser = async (data) => {
+
+        /*let id = this.state.id;*/
+
+        let res = await signUpService.postUserCustomer(data.id);
+
+        if (res.status === 200) {
+            this.setState({
+                alert: true,
+                message: res.data.message,
+                severity: 'success'
+            });
+            //this.clearFields();
+            await this.loadAllUsers();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    componentDidMount() {
+        this.loadAllUsers();
+    }
 
     render() {
         const {classes} = this.props;
@@ -361,35 +484,35 @@ class SignUpPage extends Component {
                                         </TableHead>
                                         <TableBody>
                                             {
-                                                rows.map((row) => (
+                                                this.state.userData.map((row) => (
                                                     <TableRow>
-                                                        <TableCell align="left">{}</TableCell>
-                                                        <TableCell align="left">{}</TableCell>
-                                                        <TableCell align="left">{}</TableCell>
-                                                        <TableCell align="left">{}</TableCell>
-                                                        <TableCell align="left">{}</TableCell>
-                                                        <TableCell align="left">{}</TableCell>
-                                                        <TableCell align="left">{}</TableCell>
-                                                        <TableCell align="left">{}</TableCell>
-                                                        <TableCell align="left">{}</TableCell>
-                                                        <TableCell align="left">{}</TableCell>
-                                                        <TableCell align="left">{}</TableCell>
-                                                        <TableCell align="left">{}</TableCell>
+                                                        <TableCell align="left">{row.firstname}</TableCell>
+                                                        <TableCell align="left">{row.lastname}</TableCell>
+                                                        <TableCell align="left">{row.email}</TableCell>
+                                                        <TableCell align="left">{row.username}</TableCell>
+                                                        <TableCell align="left">{row.password}</TableCell>
+                                                        <TableCell align="left">{row.city}</TableCell>
+                                                        <TableCell align="left">{row.street}</TableCell>
+                                                        <TableCell align="left">{row.number}</TableCell>
+                                                        <TableCell align="left">{row.zipcode}</TableCell>
+                                                        <TableCell align="left">{row.lat}</TableCell>
+                                                        <TableCell align="left">{row.long}</TableCell>
+                                                        <TableCell align="left">{row.phone}</TableCell>
                                                         <TableCell align="left">
                                                             <Tooltip title="Edit">
                                                                 <IconButton
-                                                                    /*onClick={() => {
-                                                                        this.updateVehicle(row);
-                                                                    }}*/
+                                                                    onClick={() => {
+                                                                        this.updateUser(row);
+                                                                    }}
                                                                 >
                                                                     <EditIcon color="primary"/>
                                                                 </IconButton>
                                                             </Tooltip>
                                                             <Tooltip title="Delete">
                                                                 <IconButton
-                                                                    /* onClick={() => {
-                                                                         this.deleteVehicle(row.vehicleId)
-                                                                     }}*/
+                                                                     onClick={() => {
+                                                                         this.deleteUser(row.id)
+                                                                     }}
                                                                 >
                                                                     <DeleteIcon color="error"/>
                                                                 </IconButton>
