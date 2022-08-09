@@ -5,6 +5,10 @@ import GDSEButton from "../../../component/common/Button/button";
 import DatePicker from "../../../component/common/DatePicker";
 import productManagerService from "../../../service/productManagerService";
 import cartManagerService from "../../../service/cartManagerService";
+import loginService from "../../../service/loginService";
+import signUpService from "../../../service/signUpService";
+
+
 
 
 class CartManage extends Component{
@@ -13,20 +17,14 @@ class CartManage extends Component{
 
 
         this.state={
+            allUsers:[],
+            allProduct:[],
             allCart:[],
+
             cartData:{
                 userId: "",
                     date: "",
-                    products: [
-                    {
-                        productId: "",
-                        quantity: ""
-                    },
-                    {
-                        productId: "",
-                        quantity: ""
-                    }
-                ]
+                    products: []
             }
         }
 
@@ -56,18 +54,57 @@ class CartManage extends Component{
     };
 
     loadAllCart = async () => {
-
         let res = await cartManagerService.fetchCart();
 
         if (res.status === 200) {
             this.setState({
-                allCart : res.data.data,
+                allCart : res.data,
                 alert: true,
                 message: res.data.message,
                 severity: 'success'
             });
             //this.clearFields();
             await this.loadAllCart();
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    loadAllProduct = async () => {
+        let res = await productManagerService.fetchProduct();
+
+        if (res.status === 200) {
+            this.setState({
+                allProduct : res.data,
+                alert: true,
+                message: res.message,
+                severity: 'success'
+            });
+
+        } else {
+            this.setState({
+                alert: true,
+                message: res.response.data.message,
+                severity: 'error'
+            });
+        }
+    };
+
+    loadAllUsers = async () => {
+        let res = await signUpService.fetchCustomers();
+
+        if (res.status === 200) {
+            this.setState({
+                allUsers : res.data,
+                alert: true,
+                message: res.message,
+                severity: 'success'
+            });
+
         } else {
             this.setState({
                 alert: true,
@@ -128,7 +165,6 @@ class CartManage extends Component{
         }
     };
 
-
     updateCart = async (data) => {
 
 
@@ -176,7 +212,8 @@ class CartManage extends Component{
     };
 
     componentDidMount() {
-        this.loadAllCart();
+        this.loadAllProduct();
+        this.loadAllUsers();
     }
 
 
@@ -210,25 +247,21 @@ class CartManage extends Component{
 
                                       onChange={(e, value, r) => {
 
-
                                       }}
                                       getOptionLabel={
-                                          (option) => option.type
+                                          (option) => option.username
                                       }
                                       id="controllable-states"
 
-                            /* value={this.state.formData.freeMileAge.dailyMileage}
 
-                             options={this.state.vehicleTypes}*/
+                             options={this.state.allUsers}
                                       sx={{m: 1, width: '35ch'}}
                                       renderInput={(params) => <TextField {...params} label="User Name"/>}
                         />
 
-                            {/*<DatePicker label ="Pick-Up-Date"
 
-                            />*/}
-                        <TextField id="outlined-basic" style={{width: '15vw'}} size='small' label="Date"
-                                   variant="outlined"/>
+
+                        <DatePicker label ="Pick-Up-Date"/>
 
                     </Grid>
 
@@ -242,17 +275,16 @@ class CartManage extends Component{
 
                                       }}
                                       getOptionLabel={
-                                          (option) => option.type
+                                          (option) => option.title
                                       }
                                       id="controllable-states"
 
-                            /* value={this.state.formData.freeMileAge.dailyMileage}
 
-                             options={this.state.vehicleTypes}*/
+                             options={this.state.allProduct}
                                       sx={{m: 1, width: '35ch'}}
                                       renderInput={(params) => <TextField {...params} label="Product Title"/>}
                         />
-                        <TextField id="outlined-basic" style={{width: '15vw'}} size='small' label="Qty"
+                        <TextField id="outlined-basic" style={{width: '23vw'}} size='small' label="Qty"
                                    variant="outlined"/>
 
                     </Grid>

@@ -50,6 +50,7 @@ class SignInPage extends Component {
                 severity: 'success',
                 link: '/dashboardPage',
             });
+            console.log(this, this.state.link)
             //this.clearFields();
             //await this.loadData();
         } else {

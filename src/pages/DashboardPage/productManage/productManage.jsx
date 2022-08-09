@@ -15,7 +15,9 @@ class ProductManage extends Component {
 
         this.state = {
             allProduct:[],
-            formDate: {
+            categories:[],
+
+            formDataProduct: {
 
                 title: "",
                 price:"",
@@ -77,7 +79,7 @@ class ProductManage extends Component {
 
         if (res.status === 200) {
             this.setState({
-                allProduct : res.data.data,
+                categories : res.data,
                 alert: true,
                 message: res.data.message,
                 severity: 'success'
@@ -92,6 +94,7 @@ class ProductManage extends Component {
             });
         }
     };
+
 
     loadSingleProduct = async () => {
         //let Id = this.state.id
@@ -194,7 +197,7 @@ class ProductManage extends Component {
     };
 
     componentDidMount() {
-        this.loadAllProducts();
+        this.loadAllProductsByCategory();
     }
 
 
@@ -238,24 +241,25 @@ class ProductManage extends Component {
                     <Autocomplete size='small' style={{width: '23vw'}}
 
                                   onChange={(e, value, r) => {
-                                      let formData = this.state.formData
+                                      let formData = this.state.formDataProduct
 
-                                      formData.vehicleType = value.type
+                                      formData.category = value
                                       this.setState({formData})
 
                                   }}
                                   getOptionLabel={
-                                      (option) => option.type
+                                      (option) => option
                                   }
                                   id="controllable-states"
 
-                        /* value={this.state.formData.freeMileAge.dailyMileage}
+                          // value={this.state.categories}
 
-                         options={this.state.vehicleTypes}*/
+                         options={this.state.categories}
                                   sx={{m: 1, width: '35ch'}}
-                                  renderInput={(params) => <TextField {...params} label="Vehicle Type"/>}
+                                  renderInput={(params) => <TextField {...params} label="Category"/>}
                     />
                 </Grid>
+
 
                 <Grid>
 
